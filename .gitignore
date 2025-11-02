@@ -131,6 +131,19 @@ __pypackages__/
 celerybeat-schedule
 celerybeat.pid
 
+# Redis
+*.rdb
+*.aof
+*.pid
+
+# RabbitMQ
+mnesia/
+rabbitmq/
+rabbitmq-data/
+
+# ActiveMQ
+activemq-data/
+
 # SageMath parsed files
 *.sage.py
 
@@ -205,3 +218,30 @@ cython_debug/
 marimo/_static/
 marimo/_lsp/
 __marimo__/
+
+# Streamlit
+.streamlit/secrets.toml
+
+# Data, Models, and Experiments
+data/
+datasets/
+models/
+results/
+logs/
+*.csv
+*.tsv
+*.xlsx
+*.h5
+*.pkl
+*.joblib
+*.tgz
+*.zip
+
+# Sensitive information
+credentials/
+.secrets/
+.env
+
+# System Files
+.DS_Store
+Thumbs.db
