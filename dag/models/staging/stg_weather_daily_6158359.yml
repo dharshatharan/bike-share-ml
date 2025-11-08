@@ -1,0 +1,47 @@
+version: 2
+
+models:
+  - name: stg_weather_daily_6158359
+    columns:
+      - name: longitude
+        data_type: double
+        
+      - name: latitude
+        data_type: double
+        
+      - name: station_name
+        data_type: varchar
+        
+      - name: climate_id
+        data_type: bigint
+        
+      - name: date_time
+        data_type: date
+        
+      - name: year
+        data_type: bigint
+        
+      - name: month
+        data_type: varchar
+        
+      - name: day
+        data_type: varchar
+        
+      - name: data_quality
+        data_type: varchar
+        
+      - name: max_temp_c
+        data_type: double
+        
+      - name: max_temp_flag
+        data_type: varchar
+        
+      - name: min_temp_c
+        data_type: double
+        
+      - name: min_temp_flag
+        data_type: varchar
+        
+      - name: mean_temp_c
+        data_type: double
+

@@ -1,0 +1,61 @@
+version: 2
+
+models:
+  - name: stg_bike_share_station_info
+    columns:
+      - name: station_id
+        data_type: varchar
+
+      - name: name
+        data_type: varchar
+
+      - name: physical_configuration
+        data_type: varchar
+
+      - name: lat
+        data_type: double
+
+      - name: lon
+        data_type: double
+
+      - name: altitude
+        data_type: double
+
+      - name: address
+        data_type: varchar
+
+      - name: capacity
+        data_type: bigint
+
+      - name: is_charging_station
+        data_type: boolean
+
+      - name: rental_methods
+        data_type: varchar[]
+
+      - name: groups
+        data_type: varchar[]
+
+      - name: obcn
+        data_type: varchar
+
+      - name: short_name
+        data_type: varchar
+
+      - name: nearby_distance
+        data_type: double
+
+      - name: _ride_code_support
+        data_type: boolean
+
+      - name: rental_uris
+        data_type: map(varchar, json)
+
+      - name: post_code
+        data_type: varchar
+
+      - name: is_valet_station
+        data_type: boolean
+
+      - name: cross_street
+        data_type: varchar

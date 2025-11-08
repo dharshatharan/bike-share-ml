@@ -1,0 +1,21 @@
+select
+    station_id::varchar as station_id,
+    name::varchar as name,
+    physical_configuration::varchar as physical_configuration,
+    lat::double as lat,
+    lon::double as lon,
+    altitude::double as altitude,
+    address::varchar as address,
+    capacity::bigint as capacity,
+    is_charging_station::boolean as is_charging_station,
+    rental_methods::varchar[] as rental_methods,
+    groups::varchar[] as groups,
+    obcn::varchar as obcn,
+    short_name::varchar as short_name,
+    nearby_distance::double as nearby_distance,
+    _ride_code_support::boolean as _ride_code_support,
+    rental_uris::map(varchar, json) as rental_uris,
+    post_code::varchar as post_code,
+    is_valet_station::boolean as is_valet_station,
+    cross_street::varchar as cross_street
+from {{ source('bikeshare', 'bike_share_station_info') }}

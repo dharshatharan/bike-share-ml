@@ -1,0 +1,19 @@
+dag:
+  outputs:
+    dev:
+      type: duckdb
+      path: ../data/processed/dev.duckdb
+      threads: 1
+      extensions:
+        - httpfs
+        - parquet
+
+    prod:
+      type: duckdb
+      path: ../data/processed/prod.duckdb
+      threads: 4
+      extensions:
+        - httpfs
+        - parquet
+
+  target: dev

@@ -1,0 +1,34 @@
+version: 2
+
+models:
+  - name: stg_bike_share_trips
+    columns:
+      - name: trip_id
+        data_type: bigint
+
+      - name: trip_duration
+        data_type: bigint
+
+      - name: start_station_id
+        data_type: bigint
+
+      - name: start_time
+        data_type: varchar
+
+      - name: start_station_name
+        data_type: varchar
+
+      - name: end_station_id
+        data_type: varchar
+
+      - name: end_time
+        data_type: varchar
+
+      - name: end_station_name
+        data_type: varchar
+
+      - name: bike_id
+        data_type: bigint
+
+      - name: user_type
+        data_type: varchar

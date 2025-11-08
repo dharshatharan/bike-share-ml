@@ -1,0 +1,9 @@
+version: 2
+sources:
+  - name: weather
+    tables:
+      - name: daily_weather_6158359
+        meta:
+          external_location: "../data/raw/weather/6158359/daily/en_climate_daily_ON_6158359_*_P1D.csv"
+          format: csv
+

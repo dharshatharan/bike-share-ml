@@ -224,9 +224,11 @@ __marimo__/
 
 # Data, Models, and Experiments
 data/
+/data
 datasets/
 dvcstore/
 models/
+!dag/models/
 results/
 logs/
 *.csv
