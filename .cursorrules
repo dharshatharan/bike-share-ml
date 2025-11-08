@@ -1,0 +1,193 @@
+# Bike Share ML Project - Cursor Rules
+
+## Project Overview
+This is a bike share machine learning project using dbt (data build tool) with DuckDB for data transformation and Python for ML workflows. The project follows a medallion architecture with staging, intermediate, and marts layers.
+
+## Tech Stack
+- **dbt**: Data transformation (dbt-core + dbt-duckdb)
+- **DuckDB**: Analytical database
+- **Python**: 3.13+ with Click for CLI
+- **DVC**: Data version control
+- **Data Formats**: CSV, JSON
+
+## Project Structure
+```
+dag/
+  models/
+    staging/      # Raw data cleaning and type casting
+    intermediate/ # Business logic transformations
+    marts/        # Final business-ready models
+    sources/      # Source definitions (bikeshare.yml, weather.yml)
+  profiles.yml   # dbt connection profiles
+  dbt_project.yml # dbt project configuration
+data/
+  raw/           # Raw source data (versioned with DVC)
+  processed/     # Processed DuckDB databases
+```
+
+## Staging Model Workflow
+
+When creating a new staging model (`stg_*.sql`), follow this exact workflow:
+
+### 1. SQL Model File (`stg_*.sql`)
+- **Location**: `dag/models/staging/stg_*.sql`
+- **Materialization**: Views (can be overridden per model with `{{ config(materialized='view') }}`)
+- **Type Casting**: Use `::` syntax (NOT `CAST()` function)
+- **Column Naming**: Convert source column names to snake_case
+  - Handle spaces: `"Column Name"` → `column_name`
+  - Handle special characters: `"Max Temp (°C)"` → `max_temp_c`
+  - Handle slashes: `"Date/Time"` → `date_time`
+- **Source Reference**: Use `{{ source('source_name', 'table_name') }}`
+- **Format**: One column per line, aligned with proper indentation
+
+**Example:**
+```sql
+select
+    "Trip Id"::bigint as trip_id,
+    "Start Station Name"::varchar as start_station_name,
+    "Max Temp (°C)"::double as max_temp_c
+from {{ source('bikeshare', 'bike_share_trips') }}
+```
+
+### 2. Documentation YML File (`stg_*.yml`)
+- **Location**: `dag/models/staging/stg_*.yml` (same name as SQL file)
+- **Structure**: 
+  - `version: 2`
+  - Model name matches SQL file name
+  - List all columns with `name` and `data_type` only
+  - **NO descriptions** - keep it minimal
+- **Column Order**: Match the order in the SQL file
+- **Data Types**: Use DuckDB types (varchar, bigint, double, boolean, varchar[], map(varchar, json), date)
+
+**Example:**
+```yaml
+version: 2
+
+models:
+  - name: stg_bike_share_trips
+    columns:
+      - name: trip_id
+        data_type: bigint
+      - name: start_station_name
+        data_type: varchar
+```
+
+### 3. Source Definitions
+- **Location**: `dag/models/sources/*.yml`
+- Define sources before creating staging models
+- Use `meta.external_location` for file paths
+- Support glob patterns for multiple files: `*.csv`, `*_P1D.csv`
+- For CSV with errors, use: `read_csv_auto('path', ignore_errors=True)` in external_location
+
+## Naming Conventions
+
+### Files
+- **Staging models**: `stg_<source_name>_<entity>.sql`
+- **Intermediate models**: `int_<purpose>_<entity>.sql`
+- **Marts models**: `fct_<entity>.sql` or `dim_<entity>.sql`
+- **Sources**: `<source_name>.yml` (e.g., `bikeshare.yml`, `weather.yml`)
+
+### Columns
+- **snake_case** for all column names
+- Boolean columns: `is_*` or `has_*` prefix
+- ID columns: `*_id` suffix
+- Timestamp columns: `*_time` or `*_timestamp`
+- Temperature columns: `*_temp_c` for Celsius
+
+### SQL Style
+- Use double quotes for source column names with spaces: `"Column Name"`
+- Use single quotes for string literals: `'value'`
+- Align `as` keywords for readability
+- One column per line in SELECT statements
+- Indent with 4 spaces (not tabs)
+
+## dbt Configuration
+
+### Model Materialization
+- **Staging**: Views (fast, no storage overhead)
+- **Intermediate**: Tables (can be configured per model)
+- **Marts**: Tables (final output)
+
+### DuckDB Types
+Common types used:
+- `varchar` - Text/string data
+- `bigint` - Large integers (IDs, counts)
+- `double` - Floating point numbers (coordinates, temperatures)
+- `boolean` - True/false values
+- `varchar[]` - Array of strings
+- `map(varchar, json)` - Key-value maps
+- `date` - Date values
+
+## Code Quality
+
+### SQL Best Practices
+- Always type cast columns explicitly
+- Use source references, never hardcode table names
+- Keep staging models simple - only cleaning and type casting
+- No business logic in staging layer
+- Handle NULLs explicitly if needed
+
+### YML Best Practices
+- Keep documentation minimal (no descriptions)
+- Match column order with SQL file
+- Use exact data types from SQL
+- One model per yml file (matching SQL filename)
+
+## Data Sources
+
+### Bikeshare Data
+- **Trips**: CSV files in `data/raw/bikeshare/trips/bikeshare-ridership-*/`
+- **Station Info**: JSON file in `data/raw/bikeshare/station_info/`
+
+### Weather Data
+- **Daily Weather**: CSV files in `data/raw/weather/6158359/daily/`
+
+## When Creating New Staging Models
+
+1. **Check source definition** in `dag/models/sources/` - ensure source exists
+2. **Create SQL file** with type casting using `::` syntax
+3. **Convert column names** to snake_case
+4. **Create matching YML file** with column definitions (no descriptions)
+5. **Test** with `dbt run -s stg_<model_name>`
+6. **Verify** column types match between SQL and YML
+
+## Common Patterns
+
+### Handling CSV Files with Errors
+```yaml
+meta:
+  external_location: "read_csv_auto('../data/raw/path/*.csv', ignore_errors=True)"
+  format: csv
+  options:
+    IGNORE_ERRORS: true
+```
+
+### Array Columns
+```sql
+rental_methods::varchar[] as rental_methods
+```
+
+### Map/JSON Columns
+```sql
+rental_uris::map(varchar, json) as rental_uris
+```
+
+### Date Columns
+```sql
+"Date/Time"::date as date_time
+```
+
+## Python Code Style
+- Use Click for CLI commands
+- Follow PEP 8 conventions
+- Type hints where appropriate
+- Keep CLI commands in `src/cli.py`
+
+## General Guidelines
+- Always check existing patterns before creating new models
+- Keep staging models focused on data cleaning only
+- Use consistent naming across the project
+- Document data types in YML files
+- Test models after creation
+- Follow the medallion architecture: staging → intermediate → marts
+
