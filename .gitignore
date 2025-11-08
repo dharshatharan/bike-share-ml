@@ -225,6 +225,7 @@ __marimo__/
 # Data, Models, and Experiments
 data/
 datasets/
+dvcstore/
 models/
 results/
 logs/
