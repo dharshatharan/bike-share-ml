@@ -1,0 +1,54 @@
+version: 2
+
+models:
+  - name: int_bike_share_trips_clean
+    columns:
+      - name: trip_id
+        data_type: bigint
+        tests:
+          - not_null
+
+      - name: trip_duration
+        data_type: bigint
+        tests:
+          - not_null
+
+      - name: start_station_id
+        data_type: bigint
+        tests:
+          - not_null
+
+      - name: start_time
+        data_type: varchar
+        tests:
+          - not_null
+
+      - name: start_station_name
+        data_type: varchar
+        tests:
+          - not_null
+
+      - name: end_station_id
+        data_type: varchar
+        tests:
+          - not_null
+
+      - name: end_time
+        data_type: varchar
+        tests:
+          - not_null
+
+      - name: end_station_name
+        data_type: varchar
+        tests:
+          - not_null
+
+      - name: bike_id
+        data_type: bigint
+        tests:
+          - not_null
+
+      - name: user_type
+        data_type: varchar
+        tests:
+          - not_null

@@ -1,0 +1,69 @@
+version: 2
+
+models:
+  - name: int_bike_share_station_info_clean
+    columns:
+      - name: station_id
+        data_type: varchar
+        tests:
+          - not_null
+
+      - name: name
+        data_type: varchar
+        tests:
+          - not_null
+
+      - name: physical_configuration
+        data_type: varchar
+        tests:
+          - not_null
+
+      - name: lat
+        data_type: double
+        tests:
+          - not_null
+
+      - name: lon
+        data_type: double
+        tests:
+          - not_null
+
+      - name: address
+        data_type: varchar
+        tests:
+          - not_null
+
+      - name: capacity
+        data_type: bigint
+        tests:
+          - not_null
+
+      - name: is_charging_station
+        data_type: boolean
+        tests:
+          - not_null
+
+      - name: rental_methods
+        data_type: varchar[]
+        tests:
+          - not_null
+
+      - name: groups
+        data_type: varchar[]
+        tests:
+          - not_null
+
+      - name: obcn
+        data_type: varchar
+        tests:
+          - not_null
+
+      - name: short_name
+        data_type: varchar
+        tests:
+          - not_null
+
+      - name: nearby_distance
+        data_type: double
+        tests:
+          - not_null

@@ -1,0 +1,59 @@
+version: 2
+
+models:
+  - name: int_weather_daily_clean
+    columns:
+      - name: longitude
+        data_type: double
+        tests:
+          - not_null
+
+      - name: latitude
+        data_type: double
+        tests:
+          - not_null
+
+      - name: station_name
+        data_type: varchar
+        tests:
+          - not_null
+
+      - name: climate_id
+        data_type: bigint
+        tests:
+          - not_null
+
+      - name: date_time
+        data_type: date
+        tests:
+          - not_null
+
+      - name: year
+        data_type: bigint
+        tests:
+          - not_null
+
+      - name: month
+        data_type: varchar
+        tests:
+          - not_null
+
+      - name: day
+        data_type: varchar
+        tests:
+          - not_null
+
+      - name: max_temp_c
+        data_type: double
+        tests:
+          - not_null
+
+      - name: min_temp_c
+        data_type: double
+        tests:
+          - not_null
+
+      - name: mean_temp_c
+        data_type: double
+        tests:
+          - not_null
