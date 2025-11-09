@@ -6,4 +6,7 @@ sources:
         meta:
           external_location: "../data/raw/weather/6158359/daily/en_climate_daily_ON_6158359_*_P1D.csv"
           format: csv
-
+      - name: daily_weather_6158355
+        meta:
+          external_location: "../data/raw/weather/6158355/daily/en_climate_daily_ON_6158355_*_P1D.csv"
+          format: csv
