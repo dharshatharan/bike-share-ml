@@ -1,0 +1,200 @@
+version: 2
+
+models:
+  - name: int_combined_trip_daily
+    columns:
+      # Primary key
+      - name: trip_date
+        data_type: date
+        tests:
+          - not_null
+
+      # Date & Time features (non-leaky)
+      - name: day_of_week
+        data_type: bigint
+        tests:
+          - not_null
+      - name: day_name
+        data_type: varchar
+        tests:
+          - not_null
+      - name: is_weekend
+        data_type: boolean
+        tests:
+          - not_null
+      - name: month_num
+        data_type: bigint
+        tests:
+          - not_null
+      - name: year
+        data_type: bigint
+        tests:
+          - not_null
+      - name: day_of_month
+        data_type: bigint
+        tests:
+          - not_null
+      - name: week_of_year
+        data_type: bigint
+        tests:
+          - not_null
+
+      # Trip volume features (LEAKY - for training labels only)
+      - name: total_trips__leaky
+        data_type: bigint
+        tests:
+          - not_null
+      - name: annual_member_trips__leaky
+        data_type: bigint
+        tests:
+          - not_null
+      - name: casual_member_trips__leaky
+        data_type: bigint
+        tests:
+          - not_null
+      - name: annual_member_ratio__leaky
+        data_type: double
+        tests:
+          - not_null
+      - name: unique_bikes__leaky
+        data_type: bigint
+        tests:
+          - not_null
+      - name: unique_start_stations__leaky
+        data_type: bigint
+        tests:
+          - not_null
+      - name: unique_end_stations__leaky
+        data_type: bigint
+        tests:
+          - not_null
+
+      # Trip duration features (LEAKY - for training labels only)
+      - name: avg_trip_duration__leaky
+        data_type: double
+        tests:
+          - not_null
+      - name: median_trip_duration__leaky
+        data_type: bigint
+        tests:
+          - not_null
+      - name: min_trip_duration__leaky
+        data_type: bigint
+        tests:
+          - not_null
+      - name: max_trip_duration__leaky
+        data_type: bigint
+        tests:
+          - not_null
+      - name: stddev_trip_duration__leaky
+        data_type: double
+      - name: p25_trip_duration__leaky
+        data_type: double
+        tests:
+          - not_null
+      - name: p75_trip_duration__leaky
+        data_type: double
+        tests:
+          - not_null
+      - name: avg_annual_member_duration__leaky
+        data_type: double
+      - name: avg_casual_member_duration__leaky
+        data_type: double
+
+      # Weather features (non-leaky)
+      - name: max_temp_c
+        data_type: double
+        tests:
+          - not_null
+      - name: min_temp_c
+        data_type: double
+        tests:
+          - not_null
+      - name: mean_temp_c
+        data_type: double
+        tests:
+          - not_null
+      - name: temp_range_c
+        data_type: double
+        tests:
+          - not_null
+
+      # Station activity features (LEAKY - for training labels only)
+      - name: top_start_station_id__leaky
+        data_type: bigint
+        tests:
+          - not_null
+      - name: top_start_station_trips__leaky
+        data_type: bigint
+        tests:
+          - not_null
+      - name: top_end_station_id__leaky
+        data_type: varchar
+        tests:
+          - not_null
+      - name: top_end_station_trips__leaky
+        data_type: bigint
+        tests:
+          - not_null
+
+      # Trip volume lags (non-leaky)
+      - name: trips_lag_1d
+        data_type: bigint
+      - name: trips_lag_2d
+        data_type: bigint
+      - name: trips_lag_3d
+        data_type: bigint
+      - name: trips_lag_7d
+        data_type: bigint
+      - name: trips_lag_30d
+        data_type: bigint
+      - name: trips_rolling_7d_avg
+        data_type: double
+      - name: trips_rolling_7d_std
+        data_type: double
+      - name: trips_rolling_30d_avg
+        data_type: double
+      - name: trips_rolling_30d_std
+        data_type: double
+
+      # User mix lags (non-leaky)
+      - name: annual_member_ratio_lag_1d
+        data_type: double
+      - name: annual_member_ratio_lag_7d
+        data_type: double
+      - name: annual_member_ratio_rolling_7d_avg
+        data_type: double
+      - name: annual_member_trips_lag_7d
+        data_type: bigint
+      - name: casual_member_trips_lag_7d
+        data_type: bigint
+
+      # Duration lags (non-leaky)
+      - name: avg_trip_duration_lag_1d
+        data_type: double
+      - name: avg_trip_duration_lag_7d
+        data_type: double
+      - name: avg_trip_duration_rolling_7d_avg
+        data_type: double
+      - name: avg_trip_duration_rolling_30d_avg
+        data_type: double
+
+      # Network activity lags (non-leaky)
+      - name: unique_bikes_lag_1d
+        data_type: bigint
+      - name: unique_bikes_lag_7d
+        data_type: bigint
+      - name: unique_start_stations_lag_1d
+        data_type: bigint
+      - name: unique_start_stations_lag_7d
+        data_type: bigint
+      - name: unique_start_stations_rolling_30d_avg
+        data_type: double
+
+      # Change indicators (non-leaky)
+      - name: trips_change_1d_pct
+        data_type: double
+      - name: trips_change_7d_pct
+        data_type: double
+      - name: trips_change_30d_pct
+        data_type: double
