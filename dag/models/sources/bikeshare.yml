@@ -4,10 +4,10 @@ sources:
     tables:
       - name: bike_share_trips
         meta:
-          external_location: "read_csv_auto('../data/raw/bikeshare/trips/bikeshare-ridership-*/Bike share ridership *.csv', ignore_errors=True)"
+          external_location: "read_csv_auto('../data/raw/bikeshare/trips/bikeshare-ridership-*/*.csv', ignore_errors=True)"
           format: csv
           options:
-            IGNORE_ERRORS: true 
+            IGNORE_ERRORS: true
       - name: bike_share_station_info
         meta:
           external_location: "../data/raw/bikeshare/station_info/station_info_extracted.json"

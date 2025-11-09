@@ -10,3 +10,6 @@ select
     bike_id,
     user_type
 from {{ ref('stg_bike_share_trips') }}
+-- all the trips without a duration are trips that have the same start and end station and start and end time
+-- so we can ignore them
+where trip_duration is not null
