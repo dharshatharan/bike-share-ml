@@ -1,18 +1,18 @@
 select
     station_id,
     name,
-    coalesce(physical_configuration, 'UNKNOWN') as physical_configuration,
     lat,
     lon,
-    -- altitude -- 45% null rest all 0
-    coalesce(address, name) as address,
     capacity,
+    -- altitude -- 45% null rest all 0
     is_charging_station,
-    coalesce(rental_methods, []) as rental_methods,
     groups,
     obcn,
     short_name,
     nearby_distance,
+    coalesce(physical_configuration, 'UNKNOWN') as physical_configuration,
+    coalesce(address, name) as address,
+    coalesce(rental_methods, []) as rental_methods
     -- _ride_code_support, -- all true, not useful
     -- rental_uris, -- all {}, not useful
     -- post_code, -- 29% null
