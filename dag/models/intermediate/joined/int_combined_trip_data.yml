@@ -169,3 +169,13 @@ models:
         data_type: double
         tests:
           - not_null
+
+      - name: weather_total_precip_mm
+        data_type: double
+        tests:
+          - not_null
+
+      - name: weather_snow_on_grnd_cm
+        data_type: bigint
+        tests:
+          - not_null

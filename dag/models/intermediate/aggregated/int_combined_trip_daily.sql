@@ -25,7 +25,7 @@ avg(trip_duration) as avg_trip_duration__leaky,
 median (trip_duration) as median_trip_duration__leaky,
 min(trip_duration) as min_trip_duration__leaky,
 max(trip_duration) as max_trip_duration__leaky,
-stddev(trip_duration) as stddev_trip_duration__leaky,
+stddev (trip_duration) as stddev_trip_duration__leaky,
 percentile_cont (0.25) within group (
     order by trip_duration
 ) as p25_trip_duration__leaky,
@@ -47,8 +47,11 @@ avg(trip_duration) filter (
 max(weather_max_temp_c) as max_temp_c,
         max(weather_min_temp_c) as min_temp_c,
         max(weather_mean_temp_c) as mean_temp_c,
-        max(weather_max_temp_c) - max(weather_min_temp_c) as temp_range_c
-        
+        max(weather_max_temp_c) - max(weather_min_temp_c) as temp_range_c,
+
+        max(weather_total_precip_mm) as total_precip_mm,
+        max(weather_snow_on_grnd_cm) as snow_on_grnd_cm
+
     from {{ ref('int_combined_trip_data') }}
     group by start_time::date
 ),
@@ -123,7 +126,7 @@ avg(total_trips__leaky) over (
     order by trip_date rows between 6 preceding
         and current row
 ) as trips_rolling_7d_avg,
-stddev(total_trips__leaky) over (
+stddev (total_trips__leaky) over (
     order by trip_date rows between 6 preceding
         and current row
 ) as trips_rolling_7d_std,
@@ -131,7 +134,7 @@ avg(total_trips__leaky) over (
     order by trip_date rows between 29 preceding
         and current row
 ) as trips_rolling_30d_avg,
-stddev(total_trips__leaky) over (
+stddev (total_trips__leaky) over (
     order by trip_date rows between 29 preceding
         and current row
 ) as trips_rolling_30d_std,

@@ -3,13 +3,13 @@ with weekly_base as (
         date_trunc('week', trip_date) as week_start_date,
 
 -- Time features (non-leaky)
-year(
+year (
     date_trunc ('week', trip_date)
 ) as year,
-weekofyear(
+weekofyear (
     date_trunc ('week', trip_date)
 ) as week_of_year,
-month(
+month (
     date_trunc ('week', trip_date)
 ) as month_num,
 count(distinct trip_date) as days_in_week,
@@ -32,12 +32,18 @@ max(max_trip_duration__leaky) as max_trip_duration__leaky,
 
 -- Weather features (non-leaky)
 
+
 avg(max_temp_c) as avg_max_temp_c,
         avg(min_temp_c) as avg_min_temp_c,
         avg(mean_temp_c) as avg_mean_temp_c,
         max(max_temp_c) as max_temp_c,
-        min(min_temp_c) as min_temp_c
-        
+        min(min_temp_c) as min_temp_c,
+        avg(total_precip_mm) as avg_total_precip_mm,
+        avg(snow_on_grnd_cm) as avg_snow_on_grnd_cm,
+        max(total_precip_mm) as max_total_precip_mm,
+        max(snow_on_grnd_cm) as max_snow_on_grnd_cm,
+        min(total_precip_mm) as min_total_precip_mm,
+        min(snow_on_grnd_cm) as min_snow_on_grnd_cm
     from {{ ref('int_combined_trip_daily') }}
     group by date_trunc('week', trip_date)
 ),
@@ -62,22 +68,20 @@ lag(total_trips__leaky, 52) over (
 
 -- Rolling trip statistics
 avg(total_trips__leaky) over (
-    order by
-        week_start_date rows between 3 preceding
+    order by week_start_date rows between 3 preceding
         and current row
 ) as trips_rolling_4w_avg,
 avg(total_trips__leaky) over (
-    order by
-        week_start_date rows between 11 preceding
+    order by week_start_date rows between 11 preceding
         and current row
 ) as trips_rolling_12w_avg,
 avg(total_trips__leaky) over (
-    order by
-        week_start_date rows between 51 preceding
+    order by week_start_date rows between 51 preceding
         and current row
 ) as trips_rolling_52w_avg,
 
 -- Change indicators
+
 
 case
             when lag(total_trips__leaky, 1) over (order by week_start_date) > 0
@@ -98,12 +102,12 @@ lag(annual_member_ratio__leaky, 1) over (
     order by week_start_date
 ) as annual_member_ratio_lag_1w,
 avg(annual_member_ratio__leaky) over (
-    order by
-        week_start_date rows between 3 preceding
+    order by week_start_date rows between 3 preceding
         and current row
 ) as annual_member_ratio_rolling_4w_avg,
 
 -- Duration lags
+
 
 lag(avg_trip_duration__leaky, 1) over (order by week_start_date) as avg_trip_duration_lag_1w,
         avg(avg_trip_duration__leaky) over (order by week_start_date rows between 3 preceding and current row) as avg_trip_duration_rolling_4w_avg

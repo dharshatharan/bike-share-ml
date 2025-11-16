@@ -100,6 +100,30 @@ models:
         data_type: double
         tests:
           - not_null
+      - name: avg_total_precip_mm
+        data_type: double
+        tests:
+          - not_null
+      - name: avg_snow_on_grnd_cm
+        data_type: double
+        tests:
+          - not_null
+      - name: max_total_precip_mm
+        data_type: double
+        tests:
+          - not_null
+      - name: max_snow_on_grnd_cm
+        data_type: double
+        tests:
+          - not_null
+      - name: min_total_precip_mm
+        data_type: double
+        tests:
+          - not_null
+      - name: min_snow_on_grnd_cm
+        data_type: double
+        tests:
+          - not_null
 
       # Trip volume lags (non-leaky)
       - name: trips_lag_1w

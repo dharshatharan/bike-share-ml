@@ -3,16 +3,16 @@ with monthly_base as (
         date_trunc('month', trip_date) as month_start_date,
 
 -- Time features (non-leaky)
-year(
+year (
     date_trunc ('month', trip_date)
 ) as year,
-month(
+month (
     date_trunc ('month', trip_date)
 ) as month_num,
-monthname(
+monthname (
     date_trunc ('month', trip_date)
 ) as month_name,
-quarter(
+quarter (
     date_trunc ('month', trip_date)
 ) as quarter,
 count(distinct trip_date) as days_in_month,
@@ -34,12 +34,19 @@ min(min_trip_duration__leaky) as min_trip_duration__leaky,
 max(max_trip_duration__leaky) as max_trip_duration__leaky,
 
 -- Weather features (non-leaky)
+
+
 avg(max_temp_c) as avg_max_temp_c,
         avg(min_temp_c) as avg_min_temp_c,
         avg(mean_temp_c) as avg_mean_temp_c,
         max(max_temp_c) as max_temp_c,
-        min(min_temp_c) as min_temp_c
-        
+        min(min_temp_c) as min_temp_c,
+        avg(total_precip_mm) as avg_total_precip_mm,
+        avg(snow_on_grnd_cm) as avg_snow_on_grnd_cm,
+        max(total_precip_mm) as max_total_precip_mm,
+        max(snow_on_grnd_cm) as max_snow_on_grnd_cm,
+        min(total_precip_mm) as min_total_precip_mm,
+        min(snow_on_grnd_cm) as min_snow_on_grnd_cm
     from {{ ref('int_combined_trip_daily') }}
     group by date_trunc('month', trip_date)
 ),
@@ -61,22 +68,21 @@ lag(total_trips__leaky, 12) over (
 
 -- Rolling trip statistics
 avg(total_trips__leaky) over (
-    order by
-        month_start_date rows between 2 preceding
+    order by month_start_date rows between 2 preceding
         and current row
 ) as trips_rolling_3m_avg,
 avg(total_trips__leaky) over (
-    order by
-        month_start_date rows between 5 preceding
+    order by month_start_date rows between 5 preceding
         and current row
 ) as trips_rolling_6m_avg,
 avg(total_trips__leaky) over (
-    order by
-        month_start_date rows between 11 preceding
+    order by month_start_date rows between 11 preceding
         and current row
 ) as trips_rolling_12m_avg,
 
 -- Change indicators
+
+
 case
             when lag(total_trips__leaky, 1) over (order by month_start_date) > 0
             then ((total_trips__leaky - lag(total_trips__leaky, 1) over (order by month_start_date))::double 
@@ -96,12 +102,13 @@ lag(annual_member_ratio__leaky, 1) over (
     order by month_start_date
 ) as annual_member_ratio_lag_1m,
 avg(annual_member_ratio__leaky) over (
-    order by
-        month_start_date rows between 2 preceding
+    order by month_start_date rows between 2 preceding
         and current row
 ) as annual_member_ratio_rolling_3m_avg,
 
 -- Duration lags
+
+
 lag(avg_trip_duration__leaky, 1) over (order by month_start_date) as avg_trip_duration_lag_1m,
         avg(avg_trip_duration__leaky) over (order by month_start_date rows between 2 preceding and current row) as avg_trip_duration_rolling_3m_avg
         

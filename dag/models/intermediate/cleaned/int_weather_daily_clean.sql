@@ -5,6 +5,9 @@ with merged_weather as (
         coalesce(primary_data.min_temp_c, secondary_data.min_temp_c) as min_temp_c,
         coalesce(primary_data.mean_temp_c, secondary_data.mean_temp_c) as mean_temp_c,
 
+				coalesce(secondary_data.total_precip_mm, 0)::double as total_precip_mm, -- fill missing total precipitation with 0, unsure if this is the best strategy as data is actually missing. 0.68% of the data is missing. Which is small enough.
+				coalesce(secondary_data.snow_on_grnd_cm, 0)::bigint as snow_on_grnd_cm, -- fill missing snow on ground with 0
+
         case
             when primary_data.mean_temp_c is null then secondary_data.climate_id
             else primary_data.climate_id
@@ -76,7 +79,9 @@ filled_weather as (
                 else mean_temp_c
             end,
             mean_temp_c
-        ) as mean_temp_c
+        ) as mean_temp_c,
+        total_precip_mm,
+        snow_on_grnd_cm
     from merged_weather
 )
 select
@@ -90,5 +95,7 @@ select
     day,
     max_temp_c,
     min_temp_c,
-    mean_temp_c
+    mean_temp_c,
+    total_precip_mm,
+    snow_on_grnd_cm
 from filled_weather
