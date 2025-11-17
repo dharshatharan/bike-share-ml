@@ -1,0 +1,56 @@
+version: 2
+
+models:
+  - name: fct_trips_weekly_v2
+    description: Simplified weekly bike share trip facts - v2 minimal feature set for ML
+    columns:
+      # Primary key
+      - name: week_start_date
+        data_type: timestamp
+        tests:
+          - not_null
+          - unique
+
+      # Time features (non-leaky)
+      - name: year
+        data_type: bigint
+        tests:
+          - not_null
+      - name: week_of_year
+        data_type: bigint
+        tests:
+          - not_null
+      - name: month_num
+        data_type: bigint
+        tests:
+          - not_null
+      - name: days_in_week
+        data_type: bigint
+        tests:
+          - not_null
+
+      # Target variables (LEAKY - what we're predicting)
+      - name: total_trips__leaky
+        data_type: bigint
+        tests:
+          - not_null
+      - name: avg_trip_duration__leaky
+        data_type: double
+        tests:
+          - not_null
+
+      # Weather features (non-leaky)
+      - name: avg_mean_temp_c
+        data_type: double
+        tests:
+          - not_null
+      - name: avg_total_precip_mm
+        data_type: double
+        tests:
+          - not_null
+
+      # Trip volume features (non-leaky - predictive)
+      - name: trips_lag_52w
+        data_type: bigint
+      - name: trips_rolling_4w_avg
+        data_type: double
