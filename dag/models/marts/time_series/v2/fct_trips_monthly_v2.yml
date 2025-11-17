@@ -2,10 +2,11 @@ version: 2
 
 models:
   - name: fct_trips_monthly_v2
-    description: Simplified monthly bike share trip facts - v2 minimal feature set for ML
+    description: Simplified monthly bike share trip facts - v2 minimal feature set for ML. Contains monthly aggregated trip metrics with temporal features, weather averages, and lagged variables for time series forecasting. Months are defined using date_trunc('month').
     columns:
       # Primary key
       - name: month_start_date
+        description: First day of the month as defined by date_trunc('month')
         data_type: timestamp
         tests:
           - not_null
@@ -13,56 +14,69 @@ models:
 
       # Time features (non-leaky)
       - name: year
+        description: Calendar year
         data_type: bigint
         tests:
           - not_null
       - name: month_num
+        description: Month number (1-12)
         data_type: bigint
         tests:
           - not_null
       - name: month_name
+        description: Full month name (January, February, etc.)
         data_type: varchar
         tests:
           - not_null
       - name: quarter
+        description: Calendar quarter (1-4)
         data_type: bigint
         tests:
           - not_null
       - name: days_in_month
+        description: Number of distinct days in this month with trip data (typically 28-31, but may be less for partial months at start/end of dataset)
         data_type: bigint
         tests:
           - not_null
       - name: non_working_day_ratio
+        description: Ratio of non-working days (weekends + holidays) to total days in the month (calculated as sum(is_weekend OR is_holiday) / count(distinct days))
         data_type: double
         tests:
           - not_null
       - name: has_covid_restrictions
+        description: Boolean flag indicating if COVID-19 restrictions were in place for any day during this month (true if any day in month had restrictions using bool_or aggregation)
         data_type: boolean
         tests:
           - not_null
 
       # Target variables (LEAKY - what we're predicting)
       - name: total_trips__leaky
+        description: Total number of bike trips during this month summed across all days (TARGET VARIABLE - leaky, should not be used as a feature for prediction)
         data_type: bigint
         tests:
           - not_null
       - name: avg_trip_duration__leaky
+        description: Average of daily average trip durations for this month in seconds (TARGET VARIABLE - leaky, should not be used as a feature for prediction)
         data_type: double
         tests:
           - not_null
 
       # Weather features (non-leaky)
       - name: avg_mean_temp_c
+        description: Average of daily mean temperatures in Celsius across the month (from weather station data)
         data_type: double
         tests:
           - not_null
       - name: avg_total_precip_mm
+        description: Average of daily total precipitation in millimeters across the month (from weather station data)
         data_type: double
         tests:
           - not_null
 
       # Trip volume features (non-leaky - predictive)
       - name: trips_lag_12m
+        description: Total trips from 12 months (1 year) ago (lag feature for capturing year-over-year patterns and seasonality)
         data_type: bigint
       - name: trips_rolling_3m_avg
+        description: Rolling 3-month average of total trips (excludes current month, uses 3 preceding months only)
         data_type: double

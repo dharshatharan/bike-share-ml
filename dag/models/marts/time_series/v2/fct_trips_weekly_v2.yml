@@ -2,10 +2,11 @@ version: 2
 
 models:
   - name: fct_trips_weekly_v2
-    description: Simplified weekly bike share trip facts - v2 minimal feature set for ML
+    description: Simplified weekly bike share trip facts - v2 minimal feature set for ML. Contains weekly aggregated trip metrics with temporal features, weather averages, and lagged variables for time series forecasting. Weeks are defined using date_trunc('week') which starts on Monday.
     columns:
       # Primary key
       - name: week_start_date
+        description: Start date of the week (Monday) as defined by date_trunc('week')
         data_type: timestamp
         tests:
           - not_null
@@ -13,52 +14,64 @@ models:
 
       # Time features (non-leaky)
       - name: year
+        description: Calendar year of the week start date
         data_type: bigint
         tests:
           - not_null
       - name: week_of_year
+        description: ISO week number of the year (1-53)
         data_type: bigint
         tests:
           - not_null
       - name: month_num
+        description: Month number (1-12) of the week start date
         data_type: bigint
         tests:
           - not_null
       - name: days_in_week
+        description: Number of distinct days in this week with trip data (typically 7, but may be less for partial weeks at start/end of dataset)
         data_type: bigint
         tests:
           - not_null
       - name: non_working_day_ratio
+        description: Ratio of non-working days (weekends + holidays) to total days in the week (calculated as sum(is_weekend OR is_holiday) / count(distinct days))
         data_type: double
         tests:
           - not_null
       - name: has_covid_restrictions
+        description: Boolean flag indicating if COVID-19 restrictions were in place for any day during this week (true if any day in week had restrictions using bool_or aggregation)
         data_type: boolean
         tests:
           - not_null
 
       # Target variables (LEAKY - what we're predicting)
       - name: total_trips__leaky
+        description: Total number of bike trips during this week summed across all days (TARGET VARIABLE - leaky, should not be used as a feature for prediction)
         data_type: bigint
         tests:
           - not_null
       - name: avg_trip_duration__leaky
+        description: Average of daily average trip durations for this week in seconds (TARGET VARIABLE - leaky, should not be used as a feature for prediction)
         data_type: double
         tests:
           - not_null
 
       # Weather features (non-leaky)
       - name: avg_mean_temp_c
+        description: Average of daily mean temperatures in Celsius across the week (from weather station data)
         data_type: double
         tests:
           - not_null
       - name: avg_total_precip_mm
+        description: Average of daily total precipitation in millimeters across the week (from weather station data)
         data_type: double
         tests:
           - not_null
 
       # Trip volume features (non-leaky - predictive)
       - name: trips_lag_52w
+        description: Total trips from 52 weeks (1 year) ago (lag feature for capturing year-over-year patterns)
         data_type: bigint
       - name: trips_rolling_4w_avg
+        description: Rolling 4-week average of total trips (excludes current week, uses 4 preceding weeks only)
         data_type: double
