@@ -1,0 +1,12 @@
+version: 2
+
+seeds:
+  - name: seed_holidays
+    description: Canadian statutory holidays and observances from 2019-2025
+    columns:
+      - name: event
+        data_type: varchar
+        description: Name of the holiday or observance
+      - name: date
+        data_type: varchar
+        description: Date of the holiday in format DD/MM/YYYY

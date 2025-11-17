@@ -1,0 +1,32 @@
+version: 2
+
+seeds:
+  - name: seed_covid_timeline
+    description: COVID-19 timeline data for Ontario including hospitalizations, ICU admissions, deaths, ED visits, and restriction status by month
+    config:
+      column_types:
+        dates: varchar
+        hospitalizations: varchar
+        icu_admissions: varchar
+        inhospital_deaths: varchar
+        ed_visits: varchar
+        restrictions: bigint
+    columns:
+      - name: dates
+        data_type: varchar
+        description: Month and year in format "MMM, YYYY"
+      - name: hospitalizations
+        data_type: varchar
+        description: Number of COVID-19 hospitalizations (stored as varchar due to comma formatting)
+      - name: icu_admissions
+        data_type: varchar
+        description: Number of ICU admissions (stored as varchar due to comma formatting)
+      - name: inhospital_deaths
+        data_type: varchar
+        description: Number of in-hospital deaths (stored as varchar due to comma formatting)
+      - name: ed_visits
+        data_type: varchar
+        description: Number of emergency department visits (stored as varchar due to comma formatting)
+      - name: restrictions
+        data_type: bigint
+        description: Binary indicator of whether COVID restrictions were in place (1 = yes, 0 = no)

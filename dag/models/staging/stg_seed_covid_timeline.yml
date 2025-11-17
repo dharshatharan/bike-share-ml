@@ -1,0 +1,33 @@
+version: 2
+
+models:
+  - name: stg_seed_covid_timeline
+    columns:
+      - name: date_string
+        data_type: varchar
+        tests:
+          - not_null
+      - name: report_date
+        data_type: date
+        tests:
+          - not_null
+      - name: restrictions
+        data_type: boolean
+        tests:
+          - not_null
+      - name: hospitalizations
+        data_type: bigint
+        tests:
+          - not_null
+      - name: icu_admissions
+        data_type: bigint
+        tests:
+          - not_null
+      - name: inhospital_deaths
+        data_type: bigint
+        tests:
+          - not_null
+      - name: ed_visits
+        data_type: bigint
+        tests:
+          - not_null

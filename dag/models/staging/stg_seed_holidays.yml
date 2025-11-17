@@ -1,0 +1,17 @@
+version: 2
+
+models:
+  - name: stg_seed_holidays
+    columns:
+      - name: holiday_name
+        data_type: varchar
+        tests:
+          - not_null
+      - name: date_string
+        data_type: varchar
+        tests:
+          - not_null
+      - name: holiday_date
+        data_type: date
+        tests:
+          - not_null
