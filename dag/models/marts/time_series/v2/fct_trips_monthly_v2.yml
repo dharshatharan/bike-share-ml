@@ -32,6 +32,14 @@ models:
         data_type: bigint
         tests:
           - not_null
+      - name: non_working_day_ratio
+        data_type: double
+        tests:
+          - not_null
+      - name: has_covid_restrictions
+        data_type: boolean
+        tests:
+          - not_null
 
       # Target variables (LEAKY - what we're predicting)
       - name: total_trips__leaky

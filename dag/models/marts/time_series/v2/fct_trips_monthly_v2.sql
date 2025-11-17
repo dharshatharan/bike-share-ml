@@ -15,6 +15,8 @@ select
     month_name,
     quarter,
     days_in_month,
+    non_working_day_ratio,
+    has_covid_restrictions,
 
     -- Target variables (LEAKY - what we're predicting)
     total_trips__leaky,

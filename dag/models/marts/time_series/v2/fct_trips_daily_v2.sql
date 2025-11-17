@@ -13,6 +13,8 @@ select
     day_of_week,
     day_name,
     is_weekend,
+    is_holiday,
+    has_covid_restrictions,
     month_num,
     year,
     day_of_month,

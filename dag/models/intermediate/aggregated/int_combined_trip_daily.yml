@@ -220,3 +220,13 @@ models:
         data_type: double
       - name: trips_change_7d_vs_14d_pct
         data_type: double
+
+      # Holiday and event features (non-leaky)
+      - name: is_holiday
+        data_type: boolean
+        tests:
+          - not_null
+      - name: has_covid_restrictions
+        data_type: boolean
+        tests:
+          - not_null

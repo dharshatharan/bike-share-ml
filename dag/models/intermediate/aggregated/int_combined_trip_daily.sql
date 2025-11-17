@@ -254,7 +254,35 @@ lagged_features as (
         end as trips_change_7d_vs_14d_pct
 
     from daily_with_stations
+),
+
+holidays as (
+    select distinct holiday_date
+    from {{ ref('stg_seed_holidays') }}
+),
+
+covid_restrictions as (
+    select
+        restrictions as has_covid_restrictions,
+        year(report_date) as year,
+        month(report_date) as month_num
+    from {{ ref('stg_seed_covid_timeline') }}
+),
+
+final as (
+    select
+        lagged_features.*,
+        coalesce(holidays.holiday_date is not null, false) as is_holiday,
+        coalesce(covid_restrictions.has_covid_restrictions, false)
+            as has_covid_restrictions
+    from lagged_features
+    left join holidays
+        on lagged_features.trip_date = holidays.holiday_date
+    left join covid_restrictions
+        on
+            year(lagged_features.trip_date) = covid_restrictions.year
+            and month(lagged_features.trip_date) = covid_restrictions.month_num
 )
 
-select * from lagged_features
+select * from final
 order by trip_date

@@ -27,6 +27,16 @@ models:
         tests:
           - not_null
 
+      # Holiday and event features (non-leaky)
+      - name: non_working_day_ratio
+        data_type: double
+        tests:
+          - not_null
+      - name: has_covid_restrictions
+        data_type: boolean
+        tests:
+          - not_null
+
       # Trip volume features (LEAKY - for training labels only)
       - name: total_trips__leaky
         data_type: bigint

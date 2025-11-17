@@ -17,6 +17,11 @@ with monthly_base as (
         ) as quarter,
         count(distinct trip_date) as days_in_month,
 
+        -- Holiday and event features (non-leaky)
+        sum(case when is_weekend or is_holiday then 1 else 0 end)::double
+        / count(distinct trip_date)::double as non_working_day_ratio,
+        bool_or(has_covid_restrictions) as has_covid_restrictions,
+
         -- Trip volume features (LEAKY)
         sum(total_trips__leaky) as total_trips__leaky,
         avg(total_trips__leaky) as avg_daily_trips__leaky,

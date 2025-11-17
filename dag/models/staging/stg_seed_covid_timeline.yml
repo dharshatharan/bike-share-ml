@@ -11,6 +11,7 @@ models:
         data_type: date
         tests:
           - not_null
+          - unique
       - name: restrictions
         data_type: boolean
         tests:
