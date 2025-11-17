@@ -154,16 +154,32 @@ models:
         data_type: bigint
       - name: trips_lag_7d
         data_type: bigint
+      - name: trips_lag_14d
+        data_type: bigint
       - name: trips_lag_30d
         data_type: bigint
+
+      # Trip volume rolling statistics (non-leaky - excludes current day)
       - name: trips_rolling_7d_avg
         data_type: double
       - name: trips_rolling_7d_std
         data_type: double
+      - name: trips_rolling_7d_min
+        data_type: bigint
+      - name: trips_rolling_7d_max
+        data_type: bigint
+      - name: trips_rolling_7d_median
+        data_type: bigint
       - name: trips_rolling_30d_avg
         data_type: double
       - name: trips_rolling_30d_std
         data_type: double
+      - name: trips_rolling_30d_min
+        data_type: bigint
+      - name: trips_rolling_30d_max
+        data_type: bigint
+      - name: trips_rolling_30d_median
+        data_type: bigint
 
       # User mix lags (non-leaky)
       - name: annual_member_ratio_lag_1d
@@ -199,10 +215,8 @@ models:
       - name: unique_start_stations_rolling_30d_avg
         data_type: double
 
-      # Change indicators (non-leaky)
-      - name: trips_change_1d_pct
+      # Change indicators (non-leaky - comparing historical periods only)
+      - name: trips_change_1d_vs_2d_pct
         data_type: double
-      - name: trips_change_7d_pct
-        data_type: double
-      - name: trips_change_30d_pct
+      - name: trips_change_7d_vs_14d_pct
         data_type: double

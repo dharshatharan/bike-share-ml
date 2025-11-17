@@ -45,12 +45,10 @@ with daily_base as (
         ) as avg_casual_member_duration__leaky,
 
         -- Weather features (non-leaky - known at prediction time)
-
         max(weather_max_temp_c) as max_temp_c,
         max(weather_min_temp_c) as min_temp_c,
         max(weather_mean_temp_c) as mean_temp_c,
         max(weather_max_temp_c) - max(weather_min_temp_c) as temp_range_c,
-
         max(weather_total_precip_mm) as total_precip_mm,
         max(weather_snow_on_grnd_cm) as snow_on_grnd_cm
 
@@ -110,7 +108,7 @@ lagged_features as (
     select
         *,
 
-        -- Trip volume lags
+        -- Trip volume lags (non-leaky)
         lag(total_trips__leaky, 1) over (
             order by trip_date
         ) as trips_lag_1d,
@@ -123,29 +121,58 @@ lagged_features as (
         lag(total_trips__leaky, 7) over (
             order by trip_date
         ) as trips_lag_7d,
+        lag(total_trips__leaky, 14) over (
+            order by trip_date
+        ) as trips_lag_14d,
         lag(total_trips__leaky, 30) over (
             order by trip_date
         ) as trips_lag_30d,
 
-        -- Rolling trip statistics
+        -- Rolling trip statistics - 7 day (non-leaky, excludes current day)
         avg(total_trips__leaky) over (
-            order by trip_date rows between 6 preceding
-            and current row
+            order by trip_date rows between 7 preceding
+            and 1 preceding
         ) as trips_rolling_7d_avg,
         stddev(total_trips__leaky) over (
-            order by trip_date rows between 6 preceding
-            and current row
+            order by trip_date rows between 7 preceding
+            and 1 preceding
         ) as trips_rolling_7d_std,
+        min(total_trips__leaky) over (
+            order by trip_date rows between 7 preceding
+            and 1 preceding
+        ) as trips_rolling_7d_min,
+        max(total_trips__leaky) over (
+            order by trip_date rows between 7 preceding
+            and 1 preceding
+        ) as trips_rolling_7d_max,
+        median(total_trips__leaky) over (
+            order by trip_date rows between 7 preceding
+            and 1 preceding
+        ) as trips_rolling_7d_median,
+
+        -- Rolling trip statistics - 30 day (non-leaky, excludes current day)
         avg(total_trips__leaky) over (
-            order by trip_date rows between 29 preceding
-            and current row
+            order by trip_date rows between 30 preceding
+            and 1 preceding
         ) as trips_rolling_30d_avg,
         stddev(total_trips__leaky) over (
-            order by trip_date rows between 29 preceding
-            and current row
+            order by trip_date rows between 30 preceding
+            and 1 preceding
         ) as trips_rolling_30d_std,
+        min(total_trips__leaky) over (
+            order by trip_date rows between 30 preceding
+            and 1 preceding
+        ) as trips_rolling_30d_min,
+        max(total_trips__leaky) over (
+            order by trip_date rows between 30 preceding
+            and 1 preceding
+        ) as trips_rolling_30d_max,
+        median(total_trips__leaky) over (
+            order by trip_date rows between 30 preceding
+            and 1 preceding
+        ) as trips_rolling_30d_median,
 
-        -- User mix lags
+        -- User mix lags (non-leaky)
         lag(annual_member_ratio__leaky, 1) over (
             order by trip_date
         ) as annual_member_ratio_lag_1d,
@@ -153,8 +180,8 @@ lagged_features as (
             order by trip_date
         ) as annual_member_ratio_lag_7d,
         avg(annual_member_ratio__leaky) over (
-            order by trip_date rows between 6 preceding
-            and current row
+            order by trip_date rows between 7 preceding
+            and 1 preceding
         ) as annual_member_ratio_rolling_7d_avg,
         lag(annual_member_trips__leaky, 7) over (
             order by trip_date
@@ -163,7 +190,7 @@ lagged_features as (
             order by trip_date
         ) as casual_member_trips_lag_7d,
 
-        -- Duration lags
+        -- Duration lags (non-leaky)
         lag(avg_trip_duration__leaky, 1) over (
             order by trip_date
         ) as avg_trip_duration_lag_1d,
@@ -171,78 +198,60 @@ lagged_features as (
             order by trip_date
         ) as avg_trip_duration_lag_7d,
         avg(avg_trip_duration__leaky) over (
-            order by trip_date rows between 6 preceding
-            and current row
+            order by trip_date rows between 7 preceding
+            and 1 preceding
         ) as avg_trip_duration_rolling_7d_avg,
         avg(avg_trip_duration__leaky) over (
-            order by trip_date rows between 29 preceding
-            and current row
+            order by trip_date rows between 30 preceding
+            and 1 preceding
         ) as avg_trip_duration_rolling_30d_avg,
 
-        -- Network activity lags
+        -- Network activity lags (non-leaky)
         lag(unique_bikes__leaky, 1) over (
             order by trip_date
         ) as unique_bikes_lag_1d,
         lag(unique_bikes__leaky, 7) over (
             order by trip_date
         ) as unique_bikes_lag_7d,
-        lag(
-            unique_start_stations__leaky,
-            1
-        ) over (
+        lag(unique_start_stations__leaky, 1) over (
             order by trip_date
         ) as unique_start_stations_lag_1d,
-        lag(
-            unique_start_stations__leaky,
-            7
-        ) over (
+        lag(unique_start_stations__leaky, 7) over (
             order by trip_date
         ) as unique_start_stations_lag_7d,
         avg(unique_start_stations__leaky) over (
-            order by trip_date rows between 29 preceding
-            and current row
+            order by trip_date rows between 30 preceding
+            and 1 preceding
         ) as unique_start_stations_rolling_30d_avg,
 
-        -- Change indicators
-
+        -- Change indicators (non-leaky - comparing historical periods only)
         case
-            when lag(total_trips__leaky, 1) over (order by trip_date) > 0
+            when lag(total_trips__leaky, 2) over (order by trip_date) > 0
                 then (
                     (
-                        total_trips__leaky
-                        - lag(total_trips__leaky, 1) over (order by trip_date)
+                        lag(total_trips__leaky, 1) over (order by trip_date)
+                        - lag(total_trips__leaky, 2)
+                            over (order by trip_date)
                     )::double
-                    / lag(total_trips__leaky, 1)
+                    / lag(total_trips__leaky, 2)
                         over (order by trip_date)
                     ::double
                 ) * 100
-        end as trips_change_1d_pct,
+        end as trips_change_1d_vs_2d_pct,
 
         case
-            when lag(total_trips__leaky, 7) over (order by trip_date) > 0
+            when lag(total_trips__leaky, 14) over (order by trip_date) > 0
                 then (
                     (
-                        total_trips__leaky
-                        - lag(total_trips__leaky, 7) over (order by trip_date)
+                        lag(total_trips__leaky, 7) over (order by trip_date)
+                        - lag(total_trips__leaky, 14)
+                            over (order by trip_date)
                     )::double
-                    / lag(total_trips__leaky, 7)
+                    / lag(total_trips__leaky, 14)
                         over (order by trip_date)
                     ::double
                 ) * 100
-        end as trips_change_7d_pct,
-
-        case
-            when lag(total_trips__leaky, 30) over (order by trip_date) > 0
-                then (
-                    (
-                        total_trips__leaky
-                        - lag(total_trips__leaky, 30) over (order by trip_date)
-                    )::double
-                    / lag(total_trips__leaky, 30)
-                        over (order by trip_date)
-                    ::double
-                ) * 100
-        end as trips_change_30d_pct
+        end as trips_change_7d_vs_14d_pct
 
     from daily_with_stations
 )

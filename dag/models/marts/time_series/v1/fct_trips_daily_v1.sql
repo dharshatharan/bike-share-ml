@@ -43,6 +43,8 @@ select
     min_temp_c,
     mean_temp_c,
     temp_range_c,
+    total_precip_mm,
+    snow_on_grnd_cm,
 
     -- Station activity features (LEAKY)
     top_start_station_id__leaky,
@@ -55,11 +57,20 @@ select
     trips_lag_2d,
     trips_lag_3d,
     trips_lag_7d,
+    trips_lag_14d,
     trips_lag_30d,
+
+    -- Trip volume rolling statistics (non-leaky)
     trips_rolling_7d_avg,
     trips_rolling_7d_std,
+    trips_rolling_7d_min,
+    trips_rolling_7d_max,
+    trips_rolling_7d_median,
     trips_rolling_30d_avg,
     trips_rolling_30d_std,
+    trips_rolling_30d_min,
+    trips_rolling_30d_max,
+    trips_rolling_30d_median,
 
     -- User mix lags (non-leaky)
     annual_member_ratio_lag_1d,
@@ -82,9 +93,7 @@ select
     unique_start_stations_rolling_30d_avg,
 
     -- Change indicators (non-leaky)
-
-    trips_change_1d_pct,
-    trips_change_7d_pct,
-    trips_change_30d_pct
+    trips_change_1d_vs_2d_pct,
+    trips_change_7d_vs_14d_pct
 
 from {{ ref('int_combined_trip_daily') }}

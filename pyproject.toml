@@ -18,6 +18,5 @@ dependencies = [
     "scikit-learn>=1.7.2",
     "seaborn>=0.13.2",
     "sqlfluff>=3.5.0",
-    "sqlfluff-templater-dbt>=3.5.0",
     "tensorflow>=2.20.0",
 ]

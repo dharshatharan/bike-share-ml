@@ -1,7 +1,3 @@
 [sqlfluff]
 dialect = duckdb
 templater = jinja
-
-[sqlfluff:templater:dbt]
-project_dir = .
-profiles_dir = .

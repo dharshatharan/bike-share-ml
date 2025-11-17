@@ -132,21 +132,55 @@ models:
       # Trip volume lags (non-leaky)
       - name: trips_lag_1m
         data_type: bigint
+      - name: trips_lag_2m
+        data_type: bigint
       - name: trips_lag_3m
+        data_type: bigint
+      - name: trips_lag_6m
         data_type: bigint
       - name: trips_lag_12m
         data_type: bigint
+
+      # Trip volume rolling statistics - 3 month (non-leaky)
       - name: trips_rolling_3m_avg
         data_type: double
+      - name: trips_rolling_3m_std
+        data_type: double
+      - name: trips_rolling_3m_min
+        data_type: bigint
+      - name: trips_rolling_3m_max
+        data_type: bigint
+      - name: trips_rolling_3m_median
+        data_type: bigint
+
+      # Trip volume rolling statistics - 6 month (non-leaky)
       - name: trips_rolling_6m_avg
         data_type: double
+      - name: trips_rolling_6m_std
+        data_type: double
+      - name: trips_rolling_6m_min
+        data_type: bigint
+      - name: trips_rolling_6m_max
+        data_type: bigint
+      - name: trips_rolling_6m_median
+        data_type: bigint
+
+      # Trip volume rolling statistics - 12 month (non-leaky)
       - name: trips_rolling_12m_avg
         data_type: double
-
-      # Change indicators (non-leaky)
-      - name: trips_change_1m_pct
+      - name: trips_rolling_12m_std
         data_type: double
-      - name: trips_change_12m_pct
+      - name: trips_rolling_12m_min
+        data_type: bigint
+      - name: trips_rolling_12m_max
+        data_type: bigint
+      - name: trips_rolling_12m_median
+        data_type: bigint
+
+      # Change indicators (non-leaky - comparing historical periods only)
+      - name: trips_change_1m_vs_2m_pct
+        data_type: double
+      - name: trips_change_12m_vs_24m_pct
         data_type: double
 
       # User mix lags (non-leaky)

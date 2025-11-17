@@ -56,73 +56,136 @@ lagged_features as (
     select
         *,
 
-        -- Trip volume lags
+        -- Trip volume lags (non-leaky)
         lag(total_trips__leaky, 1) over (
             order by month_start_date
         ) as trips_lag_1m,
+        lag(total_trips__leaky, 2) over (
+            order by month_start_date
+        ) as trips_lag_2m,
         lag(total_trips__leaky, 3) over (
             order by month_start_date
         ) as trips_lag_3m,
+        lag(total_trips__leaky, 6) over (
+            order by month_start_date
+        ) as trips_lag_6m,
         lag(total_trips__leaky, 12) over (
             order by month_start_date
         ) as trips_lag_12m,
 
-        -- Rolling trip statistics
+        -- Rolling trip statistics - 3 month (non-leaky, excludes current month)
         avg(total_trips__leaky) over (
-            order by month_start_date rows between 2 preceding
-            and current row
+            order by month_start_date rows between 3 preceding
+            and 1 preceding
         ) as trips_rolling_3m_avg,
+        stddev(total_trips__leaky) over (
+            order by month_start_date rows between 3 preceding
+            and 1 preceding
+        ) as trips_rolling_3m_std,
+        min(total_trips__leaky) over (
+            order by month_start_date rows between 3 preceding
+            and 1 preceding
+        ) as trips_rolling_3m_min,
+        max(total_trips__leaky) over (
+            order by month_start_date rows between 3 preceding
+            and 1 preceding
+        ) as trips_rolling_3m_max,
+        median(total_trips__leaky) over (
+            order by month_start_date rows between 3 preceding
+            and 1 preceding
+        ) as trips_rolling_3m_median,
+
+        -- Rolling trip statistics - 6 month (non-leaky, excludes current month)
         avg(total_trips__leaky) over (
-            order by month_start_date rows between 5 preceding
-            and current row
+            order by month_start_date rows between 6 preceding
+            and 1 preceding
         ) as trips_rolling_6m_avg,
+        stddev(total_trips__leaky) over (
+            order by month_start_date rows between 6 preceding
+            and 1 preceding
+        ) as trips_rolling_6m_std,
+        min(total_trips__leaky) over (
+            order by month_start_date rows between 6 preceding
+            and 1 preceding
+        ) as trips_rolling_6m_min,
+        max(total_trips__leaky) over (
+            order by month_start_date rows between 6 preceding
+            and 1 preceding
+        ) as trips_rolling_6m_max,
+        median(total_trips__leaky) over (
+            order by month_start_date rows between 6 preceding
+            and 1 preceding
+        ) as trips_rolling_6m_median,
+
+        -- Rolling trip statistics - 12 month (non-leaky)
         avg(total_trips__leaky) over (
-            order by month_start_date rows between 11 preceding
-            and current row
+            order by month_start_date rows between 12 preceding
+            and 1 preceding
         ) as trips_rolling_12m_avg,
+        stddev(total_trips__leaky) over (
+            order by month_start_date rows between 12 preceding
+            and 1 preceding
+        ) as trips_rolling_12m_std,
+        min(total_trips__leaky) over (
+            order by month_start_date rows between 12 preceding
+            and 1 preceding
+        ) as trips_rolling_12m_min,
+        max(total_trips__leaky) over (
+            order by month_start_date rows between 12 preceding
+            and 1 preceding
+        ) as trips_rolling_12m_max,
+        median(total_trips__leaky) over (
+            order by month_start_date rows between 12 preceding
+            and 1 preceding
+        ) as trips_rolling_12m_median,
 
-        -- Change indicators
-
+        -- Change indicators (non-leaky - comparing historical periods)
         case
-            when lag(total_trips__leaky, 1) over (order by month_start_date) > 0
+            when
+                lag(total_trips__leaky, 2)
+                    over (order by month_start_date)
+                > 0
                 then (
                     (
-                        total_trips__leaky
-                        - lag(total_trips__leaky, 1)
+                        lag(total_trips__leaky, 1)
+                            over (order by month_start_date)
+                        - lag(total_trips__leaky, 2)
                             over (order by month_start_date)
                     )::double
-                    / lag(total_trips__leaky, 1)
+                    / lag(total_trips__leaky, 2)
                         over (order by month_start_date)
                     ::double
                 ) * 100
-        end as trips_change_1m_pct,
+        end as trips_change_1m_vs_2m_pct,
 
         case
             when
-                lag(total_trips__leaky, 12) over (order by month_start_date) > 0
+                lag(total_trips__leaky, 24)
+                    over (order by month_start_date)
+                > 0
                 then (
                     (
-                        total_trips__leaky
-                        - lag(total_trips__leaky, 12)
+                        lag(total_trips__leaky, 12)
+                            over (order by month_start_date)
+                        - lag(total_trips__leaky, 24)
                             over (order by month_start_date)
                     )::double
-                    / lag(total_trips__leaky, 12)
+                    / lag(total_trips__leaky, 24)
                         over (order by month_start_date)
                     ::double
                 ) * 100
-        end as trips_change_12m_pct,
+        end as trips_change_12m_vs_24m_pct,
 
-        -- User mix lags
+        -- User mix lags (non-leaky)
         lag(annual_member_ratio__leaky, 1) over (
             order by month_start_date
         ) as annual_member_ratio_lag_1m,
         avg(annual_member_ratio__leaky) over (
-            order by month_start_date rows between 2 preceding
-            and current row
+            order by month_start_date rows between 3 preceding
+            and 1 preceding
         ) as annual_member_ratio_rolling_3m_avg,
 
-        -- Duration lags
-
+        -- Duration lags (non-leaky)
         lag(avg_trip_duration__leaky, 1)
             over (order by month_start_date)
             as avg_trip_duration_lag_1m,
@@ -130,7 +193,7 @@ lagged_features as (
             over (
                 order by
                     month_start_date
-                rows between 2 preceding and current row
+                rows between 3 preceding and 1 preceding
             )
             as avg_trip_duration_rolling_3m_avg
 

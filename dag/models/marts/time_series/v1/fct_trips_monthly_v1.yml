@@ -62,25 +62,67 @@ models:
         data_type: double
       - name: min_temp_c
         data_type: double
+      - name: avg_total_precip_mm
+        data_type: double
+      - name: avg_snow_on_grnd_cm
+        data_type: double
+      - name: max_total_precip_mm
+        data_type: double
+      - name: max_snow_on_grnd_cm
+        data_type: double
+      - name: min_total_precip_mm
+        data_type: double
+      - name: min_snow_on_grnd_cm
+        data_type: double
 
       # Trip volume lags (non-leaky)
       - name: trips_lag_1m
         data_type: bigint
+      - name: trips_lag_2m
+        data_type: bigint
       - name: trips_lag_3m
+        data_type: bigint
+      - name: trips_lag_6m
         data_type: bigint
       - name: trips_lag_12m
         data_type: bigint
+
+      # Trip volume rolling statistics (non-leaky)
       - name: trips_rolling_3m_avg
         data_type: double
+      - name: trips_rolling_3m_std
+        data_type: double
+      - name: trips_rolling_3m_min
+        data_type: bigint
+      - name: trips_rolling_3m_max
+        data_type: bigint
+      - name: trips_rolling_3m_median
+        data_type: bigint
       - name: trips_rolling_6m_avg
         data_type: double
+      - name: trips_rolling_6m_std
+        data_type: double
+      - name: trips_rolling_6m_min
+        data_type: bigint
+      - name: trips_rolling_6m_max
+        data_type: bigint
+      - name: trips_rolling_6m_median
+        data_type: bigint
       - name: trips_rolling_12m_avg
         data_type: double
+      - name: trips_rolling_12m_std
+        data_type: double
+      - name: trips_rolling_12m_min
+        data_type: bigint
+      - name: trips_rolling_12m_max
+        data_type: bigint
+      - name: trips_rolling_12m_median
+        data_type: bigint
 
       # Change indicators (non-leaky)
-      - name: trips_change_1m_pct
+      - name: trips_change_1m_vs_2m_pct
         data_type: double
-      - name: trips_change_12m_pct
+      - name: trips_change_12m_vs_24m_pct
         data_type: double
 
       # User mix lags (non-leaky)

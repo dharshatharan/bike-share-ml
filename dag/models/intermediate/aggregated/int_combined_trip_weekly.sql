@@ -53,10 +53,13 @@ lagged_features as (
     select
         *,
 
-        -- Trip volume lags
+        -- Trip volume lags (non-leaky)
         lag(total_trips__leaky, 1) over (
             order by week_start_date
         ) as trips_lag_1w,
+        lag(total_trips__leaky, 2) over (
+            order by week_start_date
+        ) as trips_lag_2w,
         lag(total_trips__leaky, 4) over (
             order by week_start_date
         ) as trips_lag_4w,
@@ -67,61 +70,119 @@ lagged_features as (
             order by week_start_date
         ) as trips_lag_52w,
 
-        -- Rolling trip statistics
+        -- Rolling trip statistics - 4 week (non-leaky, excludes current week)
         avg(total_trips__leaky) over (
-            order by week_start_date rows between 3 preceding
-            and current row
+            order by week_start_date rows between 4 preceding
+            and 1 preceding
         ) as trips_rolling_4w_avg,
+        stddev(total_trips__leaky) over (
+            order by week_start_date rows between 4 preceding
+            and 1 preceding
+        ) as trips_rolling_4w_std,
+        min(total_trips__leaky) over (
+            order by week_start_date rows between 4 preceding
+            and 1 preceding
+        ) as trips_rolling_4w_min,
+        max(total_trips__leaky) over (
+            order by week_start_date rows between 4 preceding
+            and 1 preceding
+        ) as trips_rolling_4w_max,
+        median(total_trips__leaky) over (
+            order by week_start_date rows between 4 preceding
+            and 1 preceding
+        ) as trips_rolling_4w_median,
+
+        -- Rolling trip statistics - 12 week (non-leaky, excludes current week)
         avg(total_trips__leaky) over (
-            order by week_start_date rows between 11 preceding
-            and current row
+            order by week_start_date rows between 12 preceding
+            and 1 preceding
         ) as trips_rolling_12w_avg,
+        stddev(total_trips__leaky) over (
+            order by week_start_date rows between 12 preceding
+            and 1 preceding
+        ) as trips_rolling_12w_std,
+        min(total_trips__leaky) over (
+            order by week_start_date rows between 12 preceding
+            and 1 preceding
+        ) as trips_rolling_12w_min,
+        max(total_trips__leaky) over (
+            order by week_start_date rows between 12 preceding
+            and 1 preceding
+        ) as trips_rolling_12w_max,
+        median(total_trips__leaky) over (
+            order by week_start_date rows between 12 preceding
+            and 1 preceding
+        ) as trips_rolling_12w_median,
+
+        -- Rolling trip statistics - 52 week (non-leaky, excludes current week)
         avg(total_trips__leaky) over (
-            order by week_start_date rows between 51 preceding
-            and current row
+            order by week_start_date rows between 52 preceding
+            and 1 preceding
         ) as trips_rolling_52w_avg,
+        stddev(total_trips__leaky) over (
+            order by week_start_date rows between 52 preceding
+            and 1 preceding
+        ) as trips_rolling_52w_std,
+        min(total_trips__leaky) over (
+            order by week_start_date rows between 52 preceding
+            and 1 preceding
+        ) as trips_rolling_52w_min,
+        max(total_trips__leaky) over (
+            order by week_start_date rows between 52 preceding
+            and 1 preceding
+        ) as trips_rolling_52w_max,
+        median(total_trips__leaky) over (
+            order by week_start_date rows between 52 preceding
+            and 1 preceding
+        ) as trips_rolling_52w_median,
 
-        -- Change indicators
-
+        -- Change indicators (non-leaky - comparing historical periods only)
         case
-            when lag(total_trips__leaky, 1) over (order by week_start_date) > 0
+            when
+                lag(total_trips__leaky, 2)
+                    over (order by week_start_date)
+                > 0
                 then (
                     (
-                        total_trips__leaky
-                        - lag(total_trips__leaky, 1)
+                        lag(total_trips__leaky, 1)
+                            over (order by week_start_date)
+                        - lag(total_trips__leaky, 2)
                             over (order by week_start_date)
                     )::double
-                    / lag(total_trips__leaky, 1)
+                    / lag(total_trips__leaky, 2)
                         over (order by week_start_date)
                     ::double
                 ) * 100
-        end as trips_change_1w_pct,
+        end as trips_change_1w_vs_2w_pct,
 
         case
-            when lag(total_trips__leaky, 52) over (order by week_start_date) > 0
+            when
+                lag(total_trips__leaky, 104)
+                    over (order by week_start_date)
+                > 0
                 then (
                     (
-                        total_trips__leaky
-                        - lag(total_trips__leaky, 52)
+                        lag(total_trips__leaky, 52)
+                            over (order by week_start_date)
+                        - lag(total_trips__leaky, 104)
                             over (order by week_start_date)
                     )::double
-                    / lag(total_trips__leaky, 52)
+                    / lag(total_trips__leaky, 104)
                         over (order by week_start_date)
                     ::double
                 ) * 100
-        end as trips_change_52w_pct,
+        end as trips_change_52w_vs_104w_pct,
 
-        -- User mix lags
+        -- User mix lags (non-leaky)
         lag(annual_member_ratio__leaky, 1) over (
             order by week_start_date
         ) as annual_member_ratio_lag_1w,
         avg(annual_member_ratio__leaky) over (
-            order by week_start_date rows between 3 preceding
-            and current row
+            order by week_start_date rows between 4 preceding
+            and 1 preceding
         ) as annual_member_ratio_rolling_4w_avg,
 
-        -- Duration lags
-
+        -- Duration lags (non-leaky)
         lag(avg_trip_duration__leaky, 1)
             over (order by week_start_date)
             as avg_trip_duration_lag_1w,
@@ -129,7 +190,7 @@ lagged_features as (
             over (
                 order by
                     week_start_date
-                rows between 3 preceding and current row
+                rows between 4 preceding and 1 preceding
             )
             as avg_trip_duration_rolling_4w_avg
 

@@ -38,18 +38,40 @@ select
     avg_mean_temp_c,
     max_temp_c,
     min_temp_c,
+    avg_total_precip_mm,
+    avg_snow_on_grnd_cm,
+    max_total_precip_mm,
+    max_snow_on_grnd_cm,
+    min_total_precip_mm,
+    min_snow_on_grnd_cm,
 
     -- Trip volume lags (non-leaky)
     trips_lag_1m,
+    trips_lag_2m,
     trips_lag_3m,
+    trips_lag_6m,
     trips_lag_12m,
+
+    -- Trip volume rolling statistics (non-leaky)
     trips_rolling_3m_avg,
+    trips_rolling_3m_std,
+    trips_rolling_3m_min,
+    trips_rolling_3m_max,
+    trips_rolling_3m_median,
     trips_rolling_6m_avg,
+    trips_rolling_6m_std,
+    trips_rolling_6m_min,
+    trips_rolling_6m_max,
+    trips_rolling_6m_median,
     trips_rolling_12m_avg,
+    trips_rolling_12m_std,
+    trips_rolling_12m_min,
+    trips_rolling_12m_max,
+    trips_rolling_12m_median,
 
     -- Change indicators (non-leaky)
-    trips_change_1m_pct,
-    trips_change_12m_pct,
+    trips_change_1m_vs_2m_pct,
+    trips_change_12m_vs_24m_pct,
 
     -- User mix lags (non-leaky)
     annual_member_ratio_lag_1m,

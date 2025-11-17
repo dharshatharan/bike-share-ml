@@ -128,23 +128,55 @@ models:
       # Trip volume lags (non-leaky)
       - name: trips_lag_1w
         data_type: bigint
+      - name: trips_lag_2w
+        data_type: bigint
       - name: trips_lag_4w
         data_type: bigint
       - name: trips_lag_12w
         data_type: bigint
       - name: trips_lag_52w
         data_type: bigint
+
+      # Trip volume rolling statistics - 4 week (non-leaky)
       - name: trips_rolling_4w_avg
         data_type: double
+      - name: trips_rolling_4w_std
+        data_type: double
+      - name: trips_rolling_4w_min
+        data_type: bigint
+      - name: trips_rolling_4w_max
+        data_type: bigint
+      - name: trips_rolling_4w_median
+        data_type: bigint
+
+      # Trip volume rolling statistics - 12 week (non-leaky)
       - name: trips_rolling_12w_avg
         data_type: double
+      - name: trips_rolling_12w_std
+        data_type: double
+      - name: trips_rolling_12w_min
+        data_type: bigint
+      - name: trips_rolling_12w_max
+        data_type: bigint
+      - name: trips_rolling_12w_median
+        data_type: bigint
+
+      # Trip volume rolling statistics - 52 week (non-leaky)
       - name: trips_rolling_52w_avg
         data_type: double
-
-      # Change indicators (non-leaky)
-      - name: trips_change_1w_pct
+      - name: trips_rolling_52w_std
         data_type: double
-      - name: trips_change_52w_pct
+      - name: trips_rolling_52w_min
+        data_type: bigint
+      - name: trips_rolling_52w_max
+        data_type: bigint
+      - name: trips_rolling_52w_median
+        data_type: bigint
+
+      # Change indicators (non-leaky - comparing historical periods only)
+      - name: trips_change_1w_vs_2w_pct
+        data_type: double
+      - name: trips_change_52w_vs_104w_pct
         data_type: double
 
       # User mix lags (non-leaky)
